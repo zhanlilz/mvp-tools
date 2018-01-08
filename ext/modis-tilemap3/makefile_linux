@@ -1,0 +1,34 @@
+SYSTEM  = UNIX386
+#EXTRA	= -D$(SYSTEM) -lfastm
+EXTRA	= -D$(SYSTEM) -Dlynx
+
+INCDIR  = -I. -I$(HDFINC) -I$(HDFEOS_INC) -I$(PGSINC)
+#NCFLAGS  = $(CFLAGS) -r10000 -g $(EXTRA) $(INCDIR)
+#NCFLAGS  = $(CFLAGS) -r10000 -O3 $(EXTRA) $(INCDIR)
+NCFLAGS = $(CFLAGS) -g $(EXTRA) $(INCDIR)
+#NCFLAGS  = $(CFLAGS) -O3 $(EXTRA) $(INCDIR)
+
+EXLIB   = -L$(HDFEOS_LIB) -lhdfeos -lGctp \
+	  -L$(HDFLIB) -lmfhdf -ldf -lz \
+          -L$(PGSLIB) -lPGSTK
+MATHLIB = -lm
+LOADLIB = $(EXLIB) $(MATHLIB)
+
+TARGET1	= tilemap3
+OBJ1	= tilemap3.o tile.o isinu.o error.o
+INC1	= proj.h tile.h isinu.h pi.h error.h bool.h
+
+all: $(TARGET1)
+
+$(OBJ1): $(INC1)
+$(TARGET1): $(OBJ1)
+	$(CC) -o $(TARGET1) $(OBJ1) $(LOADLIB) 
+
+clean:
+	rm -f *.o
+
+#
+# Rules
+#
+.c.o:
+	$(CC) $(NCFLAGS) -c $< -o $@
