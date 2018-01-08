@@ -5,7 +5,7 @@
 * Qingsong Sun, qingsong.sun AT umb dot edu.
 * Yan Liu, yan.liu AT umb dot edu.
 * Crystal Schaaf, crystal.schaaf AT umb dot edu. 
-* SPECTRALMASS website [https://www.umb.edu/spectralmass]
+* [SPECTRALMASS website](https://www.umb.edu/spectralmass)
 
 ## Introduction to the Toolbox
 
