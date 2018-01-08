@@ -51,3 +51,11 @@ Supporting data to run some of the tools.
 ### ext
 
 External dependencies (libraries and programs) to run some of the tools.
+
+* astrolib
+
+The IDL Astronomy User's Library (May 2015) from http://idlastro.gsfc.nasa.gov
+
+* modis-tilemap3
+
+MODLAND Tile Calculator, an offline version from [the online MODLAND Tile Calculator](https://landweb.modaps.eosdis.nasa.gov/cgi-bin/developer/tilemap.cgi)
