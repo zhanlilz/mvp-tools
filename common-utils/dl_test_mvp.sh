@@ -168,6 +168,7 @@ cd $out_dir
 # #          end of download SNOW COVER          #
 # ################################################
 
+ftprc_bak=ftp1.txt
 ftprc=ftp2.txt
 
 echo "
@@ -177,6 +178,13 @@ passive
 binary
 prompt
 " > $ftprc
+echo "
+quote USER ${user}
+quote PASS ${password}
+quote PASV
+binary
+prompt
+" > $ftprc_bak
 
 for mon in {1..12};do
 	day=1
@@ -195,11 +203,14 @@ for mon in {1..12};do
 		if [ -z $exist ]; then
 			rdir=/allData/${num}/${par}/${year}/${doy}
 			echo "cd $rdir" >> $ftprc
+                        echo "cd $rdir" >> $ftprc_bak
 #			mkdir -p ".${rdir}"
                         if [ "$tile" == "all" ]; then
                             echo "mget ${par}.*.$fmt" >> $ftprc
+                            echo "mget ${par}.*.$fmt" >> $ftprc_bak
                         else
                             echo "mget ${par}.*.${tile}.*.$fmt" >> $ftprc
+                            echo "mget ${par}.*.${tile}.*.$fmt" >> $ftprc_bak
                         fi
 		fi
 
@@ -208,5 +219,16 @@ for mon in {1..12};do
 done
 
 echo "bye" >> $ftprc
+echo "bye" >> $ftprc_bak
 
 ftp -n ${ftpurl} < $ftprc 
+ftp_exit=$?
+
+ftp -n ${ftpurl} < $ftprc_bak
+ftp_exit_bak=$?
+
+if [[ $ftp_exit == 0 || $ftp_exit_bak == 0 ]]; then
+    echo "Finished downloading ${par} of ${year} from ${begin_doy} to ${end_doy}"
+else
+    echo "Failed downloading ${par} of ${year} from ${begin_doy} to ${end_doy}"
+fi
