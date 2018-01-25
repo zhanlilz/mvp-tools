@@ -215,7 +215,7 @@ ftp -p -n ${ftpurl} < $ftprc
 ftp_exit=$?
 
 if [[ $ftp_exit == 0 ]]; then
-    echo "Finished downloading ${par} of ${year} from ${begin_doy} to ${end_doy}"
+    echo "Finished downloading ${par} of ${tile} of ${year} from ${begin_doy} to ${end_doy}"
 else
-    echo "Failed downloading ${par} of ${year} from ${begin_doy} to ${end_doy}"
+    echo "Failed downloading ${par} of ${tile} of ${year} from ${begin_doy} to ${end_doy}"
 fi
