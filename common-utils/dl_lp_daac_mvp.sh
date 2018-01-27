@@ -136,9 +136,9 @@ do
     fpat="${par}.A${year}${doystr}.${tilestr}${numstr}.*.${fmt}"
     rdir="${par}.${numstr}/${year}.${mm}.${dd}/"
     if [ $count -eq 0 ]; then
-        wget -a ${LOG} --save-cookies cookies.txt --keep-session-cookies --http-user="${user}" --http-password="${password}" --wait=15 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
+        wget -a ${LOG} --save-cookies cookies.txt --keep-session-cookies --http-user="${user}" --http-password="${password}" -nc --wait=15 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
     else
-        wget -a ${LOG} --load-cookies cookies.txt --wait=15 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
+        wget -a ${LOG} --load-cookies cookies.txt -nc --wait=15 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
     fi
     count=$((${count}+1))
     
