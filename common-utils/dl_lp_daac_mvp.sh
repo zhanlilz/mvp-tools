@@ -10,8 +10,8 @@ jul () { date -d "$1-01-01 +$2 days -1 day" "+%Y%m%d"; }
 
 # wget retry times
 retry=10
-MIN_SLEEPTIME=3
-MAX_SLEEPTIME=5
+MIN_SLEEPTIME=1
+MAX_SLEEPTIME=3
 
 fmt=h5
 tile="*"
@@ -136,9 +136,9 @@ do
     fpat="${par}.A${year}${doystr}.${tilestr}${numstr}.*.${fmt}"
     rdir="${par}.${numstr}/${year}.${mm}.${dd}/"
     if [ $count -eq 0 ]; then
-        wget -a ${LOG} --save-cookies cookies.txt --keep-session-cookies --http-user="${user}" --http-password="${password}" -nc --wait=5 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
+        wget -a ${LOG} --save-cookies cookies.txt --keep-session-cookies --http-user="${user}" --http-password="${password}" -nc --wait=2 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
     else
-        wget -a ${LOG} --load-cookies cookies.txt -nc --wait=5 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
+        wget -a ${LOG} --load-cookies cookies.txt -nc --wait=2 -t 0 --waitretry=${retry} --random-wait -r -l 1 -nd --no-parent -A "${fpat}" ${url_base}${rdir}
     fi
     count=$((${count}+1))
     
