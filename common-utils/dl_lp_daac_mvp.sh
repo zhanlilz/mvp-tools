@@ -111,7 +111,7 @@ fi
 
 cd $out_dir
 
-LOG="wget_lp_daac_${tile}_${year}_$(printf %03d ${begin_doy})_$(printf %03d ${end_doy}).log"
+LOG="wget_lp_daac_${par}_${tile}_${year}_$(printf %03d ${begin_doy})_$(printf %03d ${end_doy}).log"
 >${LOG}
 
 numstr=`printf %03d ${num}`
