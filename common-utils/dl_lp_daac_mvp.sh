@@ -77,6 +77,13 @@ if [ "$tile" == "all" ] || [ "$tile" == "*" ]; then
     tilestr="";
 else
     tilestr="${tile}."
+    # check if the tile numbers are legal
+    hnum=$(( $(echo ${tile:1:2} | sed 's/^0*//') ))
+    vnum=$(( $(echo ${tile:3:2} | sed 's/^0*//') ))
+    if [[ ${hnum} -lt 0 || ${hnum} -gt 35 || ${vnum} -lt 0 || ${vnum} -gt 17 ]]; then
+       echo "Illegal tile numbers in ${tile}"
+       exit 2
+    fi
 fi
 
 if [ -z $dir ]; then
