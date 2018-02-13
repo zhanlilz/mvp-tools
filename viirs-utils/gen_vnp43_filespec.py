@@ -221,8 +221,16 @@ def getKeyword(h5fobj, kw):
             del gattr_dict["InputPointer"]
             
         out_df = attrDictToDataFrame(gattr_dict, const_only=True)
+        
+        old_colw = pd.options.display.max_colwidth
+        if len(out_df) > 0:
+            max_strlen = max([len(row[1].loc["Value"]) for row in out_df.iterrows()]) + 1
+            pd.options.display.max_colwidth = max_strlen if max_strlen > old_colw else old_colw
 
         out_str = out_df.to_string(header=True, index=False, index_names=False, justify="justify")
+
+        pd.options.display.max_colwidth = old_colw
+
         return out_str
 
     elif kw == "StructMetadata.0":
@@ -258,7 +266,12 @@ def getKeyword(h5fobj, kw):
             
             out_str += "SDS Attributes:\n"
 
+            old_colw = pd.options.display.max_colwidth
+            if len(tmp_df) > 0:
+                max_strlen = max([len(row[1].loc["Value"]) for row in tmp_df.iterrows()]) + 1
+                pd.options.display.max_colwidth = max_strlen if max_strlen > old_colw else old_colw
             out_str += tmp_df.to_string(header=True, index=False, index_names=False, justify="justify")
+            pd.options.display.max_colwidth = old_colw
 
             out_str += "\n\n"
             out_str_list.append(out_str)
