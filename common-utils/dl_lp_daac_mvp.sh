@@ -8,6 +8,23 @@ url_base='https://e4ftl01.cr.usgs.gov/MOTA/'
 # return YYYYMMDD
 jul () { date -d "$1-01-01 +$2 days -1 day" "+%Y%m%d"; }
 
+function echoErrorStr () 
+{
+    echo -e $(date +"%Y-%m-%d %T")" [ERR] "'\033[31m'${1}'\033[0m'
+}
+function echoWarnStr () 
+{
+    echo -e $(date +"%Y-%m-%d %T")" [WRN] "'\033[33m'${1}'\033[0m'
+}
+function echoInfoStr () 
+{
+    echo -e $(date +"%Y-%m-%d %T")" [INF] "'\033[32m'${1}'\033[0m'
+}
+function echoStatStr () 
+{
+    echo -e $(date +"%Y-%m-%d %T")" [STA] "'\033[0m'${1}'\033[0m'
+}
+
 # wget retry times
 retry=10
 MIN_SLEEPTIME=1
@@ -81,7 +98,7 @@ else
     hnum=$(( $(echo ${tile:1:2} | sed 's/^0*//') ))
     vnum=$(( $(echo ${tile:3:2} | sed 's/^0*//') ))
     if [[ ${hnum} -lt 0 || ${hnum} -gt 35 || ${vnum} -lt 0 || ${vnum} -gt 17 ]]; then
-       echo "Illegal tile numbers in ${tile}"
+       echoErrorStr "Illegal tile numbers in ${tile}"
        exit 2
     fi
 fi
@@ -107,7 +124,7 @@ if [ -z $end_doy ]; then
 fi
 
 if [ ! -r $dir ]; then
-	echo "$dir not exists."
+	echoErrorStr "$dir not exists."
 	exit
 fi
 
@@ -128,7 +145,7 @@ for ((doy=${begin_doy}; doy<=${end_doy}; doy++));
 do
     doystr=`printf %03d ${doy}`
 
-    echo "Downloading ${par} ${tile} ${year}${doystr}"
+    echoStatStr "Downloading ${par} ${tile} ${year}${doystr}"
 
     yyyymmdd=`jul $year $doy`
     yyyy=${yyyymmdd:0:4}
@@ -159,4 +176,4 @@ do
 done
 
 rm -f cookies.txt
-echo "Finished downloading ${par} of ${tile} of ${year} from ${begin_doy} to ${end_doy}"
+echoStatStr "Finished downloading ${par} of ${tile} of ${year} from ${begin_doy} to ${end_doy}"
