@@ -2,6 +2,7 @@
 
 import argparse
 import datetime
+import warnings
 
 import h5py
 import numpy as np
@@ -120,7 +121,17 @@ def getDimList(struct_meta_str, df_name):
         raise RuntimeError("Given Data Field {0:s} not found in the StructMetadata.0".format(df_name))
 
 
-def attrDictToDataFrame(gattr_dict):
+def attrDictToDataFrame(gattr_dict, const_only=False):
+    # These attributes have constant values across product files and
+    # their values will be output to the data frame. Otherwise,
+    # "Variable" will appear as the value column in the data frame.
+    const_attr_names = ["AlgorithmType", "AlgorithmVersion", 
+                        "LongName", "PGEVersion", "PGE_Name", 
+                        "PlatformShortName", "ProcessingCenter", 
+                        "SatelliteInstrument", 
+                        "SensorShortname", "ShortName", 
+                        "identifier_product_doi_authority"]
+
     tattr_dict = {}
     for k, val in gattr_dict.iteritems():
         try:
@@ -152,7 +163,10 @@ def attrDictToDataFrame(gattr_dict):
         val_str = ",".join([fmtH5TypeValue(v)[1] for v in val])
         if len(val) > 1:
             val_str = "[" + val_str + "]"
-        out_dict["Value"].append(val_str)
+        if (not const_only) or (k in const_attr_names):
+            out_dict["Value"].append(val_str)
+        else:
+            out_dict["Value"].append("Variable")
         out_dict["Type"].append(type_str)
         out_dict["Num_Val"].append(len(val))
         if k in source_stig:
@@ -166,7 +180,8 @@ def getKeyword(h5fobj, kw):
     if kw == "AlgorithmVersion":
         attr_key = "AlgorithmVersion"
         if attr_key not in h5fobj.attrs.keys():
-            raise RuntimeError("Cannot find '{0:s}' in the global attributes.".format(attr_key))
+            warnings.warn("Cannot find '{0:s}' in the global attributes of {1:s}.".format(attr_key, h5fobj.filename), RuntimeWarning)
+            return "MISSING"
         return h5fobj.attrs[attr_key].split()[1]
 
     elif kw == "Date":
@@ -175,13 +190,15 @@ def getKeyword(h5fobj, kw):
     elif kw == "ShortName":
         attr_key = "ShortName"
         if attr_key not in h5fobj.attrs.keys():
-            raise RuntimeError("Cannot find '{0:s}' in the global attributes.".format(attr_key))
+            warnings.warn("Cannot find '{0:s}' in the global attributes of {1:s}.".format(attr_key, h5fobj.filename), RuntimeWarning)
+            return "MISSING"
         return h5fobj.attrs[attr_key]
 
     elif kw == "LongName":
         attr_key = "LongName"
         if attr_key not in h5fobj.attrs.keys():
-            raise RuntimeError("Cannot find '{0:s}' in the global attributes.".format(attr_key))
+            warnings.warn("Cannot find '{0:s}' in the global attributes of {1:s}.".format(attr_key, h5fobj.filename), RuntimeWarning)
+            return "MISSING"
         return h5fobj.attrs[attr_key]
 
     elif kw == "Level":
@@ -190,7 +207,8 @@ def getKeyword(h5fobj, kw):
     elif kw == "AlgorithmIdentity":
         attr_key = "AlgorithmVersion"
         if attr_key not in h5fobj.attrs.keys():
-            raise RuntimeError("Cannot find '{0:s}' in the global attributes.".format(attr_key))
+            warnings.warn("Cannot find '{0:s}' in the global attributes {1:s}.".format(attr_key, h5fobj.filename), RuntimeWarning)
+            return "MISSING"
         return h5fobj.attrs[attr_key].split()[0]
 
     elif kw == "DataFields":
@@ -202,7 +220,7 @@ def getKeyword(h5fobj, kw):
         if "InputPointer" in gattr_dict.keys():
             del gattr_dict["InputPointer"]
             
-        out_df = attrDictToDataFrame(gattr_dict)
+        out_df = attrDictToDataFrame(gattr_dict, const_only=True)
 
         out_str = out_df.to_string(header=True, index=False, index_names=False, justify="justify")
         return out_str
