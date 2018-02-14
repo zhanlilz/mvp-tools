@@ -100,7 +100,7 @@ def fmtH5TypeValue(val):
         return "STRING", "{0:s}".format(val)
     elif dtype_str.find("float") > -1:
         # return "DOUBLE", "{0:.3f}".format(val)
-        return dtype_str[dtype_str.find("float"):].rstrip("'>").upper(), "{0:.3f}".format(val)
+        return dtype_str[dtype_str.find("float"):].rstrip("'>").upper(), "{0:g}".format(val)
     elif dtype_str.find("uint") > -1:
         return dtype_str[dtype_str.find("uint"):].rstrip("'>").upper(), "{0:d}".format(val)
     elif dtype_str.find("int") > -1:
