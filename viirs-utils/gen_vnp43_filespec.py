@@ -112,6 +112,11 @@ def fmtH5TypeValue(val):
 
 
 def getDimList(struct_meta_str, df_name):
+    # AElmes added a decode to ASCII so the .find() method would work 10/11/2018
+    try:
+        struct_meta_str = struct_meta_str.decode('ASCII')
+    except TypeError:
+        pass
     i = struct_meta_str.find(df_name)
     if i > -1:
         j = struct_meta_str[i:].find("DimList")
@@ -133,7 +138,8 @@ def attrDictToDataFrame(gattr_dict, const_only=False):
                         "identifier_product_doi_authority"]
 
     tattr_dict = {}
-    for k, val in gattr_dict.iteritems():
+    # AElmes changed gatter_dict.iteritems() to gatter_dict.items() for py3 10/11/2018
+    for k, val in gattr_dict.items():
         try:
             if str(type(val)).find("str") > -1:
                 tval = [val]
@@ -144,7 +150,7 @@ def attrDictToDataFrame(gattr_dict, const_only=False):
             tval = [val]
         tattr_dict[k] = tval
 
-    for k, val in tattr_dict.iteritems():
+    for k, val in tattr_dict.items():
         try:
             tval = [pd.to_datetime(v).to_pydatetime() if str(type(v)).find("str")>-1 else v for v in val]
         except ValueError:
@@ -212,7 +218,8 @@ def getKeyword(h5fobj, kw):
         return h5fobj.attrs[attr_key].split()[0]
 
     elif kw == "DataFields":
-        df_list = h5fobj['HDFEOS']['GRIDS']['VIIRS_Grid_BRDF']['Data Fields'].keys()
+        # AElmes changed the third index from 'VIIRS_Grid_BRDF' to 'VIIRS_CMG_BRDF' here and below 10/11/2018
+        df_list = h5fobj['HDFEOS']['GRIDS']['VIIRS_CMG_BRDF']['Data Fields'].keys()
         return "\n".join(df_list)
 
     elif kw == "GlobalAttributes":
@@ -239,10 +246,10 @@ def getKeyword(h5fobj, kw):
     elif kw == "DataFieldDefinitions":
         out_str_list = []
 
-        for ds_name in h5fobj['HDFEOS']['GRIDS']['VIIRS_Grid_BRDF']['Data Fields'].keys():
+        for ds_name in h5fobj['HDFEOS']['GRIDS']['VIIRS_CMG_BRDF']['Data Fields'].keys():
             out_str = "\n"
 
-            ds = h5fobj['HDFEOS']['GRIDS']['VIIRS_Grid_BRDF']['Data Fields'][ds_name]
+            ds = h5fobj['HDFEOS']['GRIDS']['VIIRS_CMG_BRDF']['Data Fields'][ds_name]
 
             tmp_df = attrDictToDataFrame(dict(ds.attrs.items()))
             desc_str = ""
@@ -299,7 +306,13 @@ def main(cmdargs):
                 # the format string.
                 kw_values = []
                 for kw in keywords:
-                    kw_values.append(getKeyword(h5fobj,  kw))
+                    # AElmes added a decode after duck typing the returned object 10/11/2018
+                    str_kw = getKeyword(h5fobj, kw)
+                    try:
+                        str_kw = str_kw.decode('ASCII')
+                    except AttributeError:
+                        pass
+                    kw_values.append(str_kw)
                 outstr = fmtstr.format(*kw_values)
             fsout_fobj.write(outstr)
 
@@ -307,4 +320,5 @@ def main(cmdargs):
 
 if __name__ == "__main__":
     cmdargs = getCmdArgs()
+    #cmdargs = "-t /media/sf_LinuxShare/VIIRS_BRDF_CMG/brdf_cmg_carol/vnp43_filespec_template_example.fs -f /media/sf_LinuxShare/VIIRS_BRDF_CMG/brdf_cmg_carol/VNP43C1.A2015001.001.2018248214936.h5 -o /media/sf_LinuxShare/VIIRS_BRDF_CMG/brdf_cmg_carol/test.fs"
     main(cmdargs)
