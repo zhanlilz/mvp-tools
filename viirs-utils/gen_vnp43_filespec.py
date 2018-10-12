@@ -212,7 +212,7 @@ def getKeyword(h5fobj, kw):
         return h5fobj.attrs[attr_key].split()[0]
 
     elif kw == "DataFields":
-        df_list = h5fobj['HDFEOS']['GRIDS']['VIIRS_Grid_BRDF']['Data Fields'].keys()
+        df_list = h5fobj['HDFEOS']['GRIDS']['VIIRS_CMG_BRDF']['Data Fields'].keys()
         return "\n".join(df_list)
 
     elif kw == "GlobalAttributes":
@@ -239,10 +239,10 @@ def getKeyword(h5fobj, kw):
     elif kw == "DataFieldDefinitions":
         out_str_list = []
 
-        for ds_name in h5fobj['HDFEOS']['GRIDS']['VIIRS_Grid_BRDF']['Data Fields'].keys():
+        for ds_name in h5fobj['HDFEOS']['GRIDS']['VIIRS_CMG_BRDF']['Data Fields'].keys():
             out_str = "\n"
 
-            ds = h5fobj['HDFEOS']['GRIDS']['VIIRS_Grid_BRDF']['Data Fields'][ds_name]
+            ds = h5fobj['HDFEOS']['GRIDS']['VIIRS_CMG_BRDF']['Data Fields'][ds_name]
 
             tmp_df = attrDictToDataFrame(dict(ds.attrs.items()))
             desc_str = ""
