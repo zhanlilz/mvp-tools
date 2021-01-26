@@ -165,9 +165,9 @@ do
 
     if [[ ! -z ${fhref} ]]; then
         if [[ ${count} -eq 0 ]]; then
-            wget -a ${LOG} --save-cookies cookies.txt --keep-session-cookies --http-user="${user}" --http-password="${password}" -c --wait=2 -t 0 --waitretry=${retry} --random-wait ${url_base}${rdir}${fhref}
+            wget -a ${LOG} --save-cookies cookies.txt --keep-session-cookies --http-user="${user}" --http-password="${password}" -c -t 0 --waitretry=${retry} --random-wait ${url_base}${rdir}${fhref}
         else
-            wget -a ${LOG} --load-cookies cookies.txt -c --wait=2 -t 0 --waitretry=${retry} --random-wait ${url_base}${rdir}${fhref}
+            wget -a ${LOG} --load-cookies cookies.txt -c -t 0 --waitretry=${retry} --random-wait ${url_base}${rdir}${fhref}
         fi
         count=$((${count}+1))
     fi
