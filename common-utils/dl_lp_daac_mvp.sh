@@ -145,7 +145,7 @@ for ((doy=${begin_doy}; doy<=${end_doy}; doy++));
 do
     doystr=`printf %03d ${doy}`
 
-    echoStatStr "Downloading ${par} ${tile} ${year}${doystr}"
+    # echoStatStr "Downloading ${par} ${tile} ${year}${doystr}"
 
     yyyymmdd=`jul $year $doy`
     yyyy=${yyyymmdd:0:4}
@@ -168,6 +168,12 @@ do
             wget -a ${LOG} --save-cookies cookies.txt --keep-session-cookies --http-user="${user}" --http-password="${password}" -c -t 0 --waitretry=${retry} --random-wait ${url_base}${rdir}${fhref}
         else
             wget -a ${LOG} --load-cookies cookies.txt -c -t 0 --waitretry=${retry} --random-wait ${url_base}${rdir}${fhref}
+        fi
+
+        if [[ $? -eq 0 ]]; then
+            echoStatStr "Downloading ${par} ${tile} ${year}${doystr}, SUCCESS"
+        else
+            echoErrorStr "Download ${par} ${tile} ${year}${doystr}, FAILED"
         fi
         count=$((${count}+1))
     fi
